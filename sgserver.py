@@ -4,10 +4,25 @@ from asyncio.queues import Queue
 import functools
 import asyncio
 import websockets
+import os
+import json
+import hashlib
 
 @dataclasses.dataclass
 class Task:
     path: str
+    file_size = None
+    md5sum = None
+
+    def __post_init__(self):
+        assert self.file_size is None
+        self.file_size = os.path.getsize(self.path)
+        with open(self.path, "rb") as f:
+            self.md5sum = hashlib.md5(f.read()).hexdigest()
+
+    # TODO: add a generic method to dump a dataclass as json
+    def to_json(self):
+        return json.dumps({"path": self.path, "file_size": self.file_size, "md5sum": self.md5sum})
 
 @functools.lru_cache()
 def get_queue():
@@ -19,10 +34,13 @@ async def add_task(task):
 
 async def handle_tcp_conn(reader, writer):
     data = await reader.read(1024)
-    data = data.decode()
-    print(f"TCP server received message {data}")
+    path = data.decode()
+    print(f"TCP server received message {path}")
+    if not os.path.exists(path):
+        print(f"Invalid path {path}")
+        return
     writer.close()
-    task = Task(path=data)
+    task = Task(path=path)
     await add_task(task)
 
 async def tcp_server():
@@ -46,7 +64,15 @@ async def ws_handler(ws, path):
         try:
             task = await get_queue().get()
             print(f"ws_handler get task {task.path}")
-            await ws.send(task.path)
+            metadata_str = task.to_json()
+            await ws.send(len(metadata_str).to_bytes(8, "big"))
+            await ws.send(metadata_str)
+
+            with open(task.path, "rb") as f:
+                while data := f.read(1024):  # write at most 1024 bytes once
+                    await ws.send(data)
+
+            print(f"ws_handler finished task {task.path}")
         except websockets.ConnectionClosedOK:
             break
 
