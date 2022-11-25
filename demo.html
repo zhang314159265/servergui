@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>WebSocket Demo</title>
+</head>
+<body>
+<button onclick="contact_server">Click here</button>
+</body>
+
+<script>
+const socket = new WebSocket("ws://shunting.mynetgear.com:1346");
+socket.addEventListener("open", function(event) {
+  socket.send("Connection established");
+});
+
+socket.addEventListener("message", function(event) {
+  console.log(event.data);
+});
+
+const contact_server = () => {
+  socket.send("Initialize");
+}
+</script>
+</html>
