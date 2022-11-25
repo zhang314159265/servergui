@@ -58,12 +58,15 @@ async def tcp_server():
     async with server:
         await server.serve_forever()
 
-async def ws_handler(ws, path):
+async def ws_handler(args, ws, path):
     """
     TODO: can not handle mutliple concurrent websocket clients properly. The tasks
     will just be randomly split by different ws clients.
     """
     print("Enter handler")
+    for presend_path in args.presend_paths:
+        await add_task(presend_path)
+
     while True:
         try:
             task = await get_queue().get()
@@ -82,9 +85,9 @@ async def ws_handler(ws, path):
 
     print("Exit handler")
 
-async def ws_server():
+async def ws_server(args):
     print("Start ws_server")
-    async with websockets.serve(ws_handler, "", 1346):
+    async with websockets.serve(functools.partial(ws_handler, args), "", 1346):
         await asyncio.Future()  # run forever
 
 async def main():
@@ -95,12 +98,10 @@ async def main():
     """
     parser = optparse.OptionParser(usage=usage)
     options, args = parser.parse_args()
-
-    for path in args:
-        await add_task(path) 
+    options.presend_paths = args
 
     await asyncio.gather(
-        ws_server(),
+        ws_server(options),
         tcp_server()
     )
 

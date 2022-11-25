@@ -5,6 +5,11 @@
 - [Python Socket Tutorial](https://realpython.com/python-sockets/)
 
 # Scratch
+
+- [JavaScript: The Good Parts](https://github.com/hypnguyen1209/JS-ebook/blob/master/JavaScriptTheGoodParts.pdf)
+  - stop at ch3 (vp 39)
+
+
 - [Python asyncio-queue](https://docs.python.org/3/library/asyncio-queue.html)
 
 - [WebSocket Doc - mozilla)(https://developer.mozilla.org/en-US/docs/Web/API/Websockets_API): Talk about both client and server side implementations.
