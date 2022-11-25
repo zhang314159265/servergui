@@ -53,7 +53,7 @@ ws.addEventListener("message", function(event) {
       payload = recv_buffer.slice(0, metadata.file_size)
       recv_buffer = recv_buffer.slice(metadata.file_size)
       recv_state = "EXPECT_LEN"
-      console.log("Got payload: " + payload)
+      console.log("Got " + payload.byteLength + " bytes payload")
       // TODO: compare the md5sum. md5.min.js works for string but seems to not
       // work for Uint8Array
 
