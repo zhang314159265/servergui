@@ -7,6 +7,7 @@ import websockets
 import os
 import json
 import hashlib
+import optparse
 
 @dataclasses.dataclass
 class Task:
@@ -29,6 +30,10 @@ def get_queue():
     return Queue()
 
 async def add_task(task):
+    if isinstance(task, str):
+        task = Task(task)
+
+    assert isinstance(task, Task)
     print(f"Add task to the queue: {task.path}")
     await get_queue().put(task)
 
@@ -40,8 +45,7 @@ async def handle_tcp_conn(reader, writer):
         print(f"Invalid path {path}")
         return
     writer.close()
-    task = Task(path=path)
-    await add_task(task)
+    await add_task(path)
 
 async def tcp_server():
     print("Start tcp_server")
@@ -84,6 +88,17 @@ async def ws_server():
         await asyncio.Future()  # run forever
 
 async def main():
+    usage = """
+        usage: sgserver [path...]
+
+        Paths specified on the command line will be put into the queue directly.
+    """
+    parser = optparse.OptionParser(usage=usage)
+    options, args = parser.parse_args()
+
+    for path in args:
+        await add_task(path) 
+
     await asyncio.gather(
         ws_server(),
         tcp_server()
