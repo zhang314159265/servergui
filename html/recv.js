@@ -57,9 +57,7 @@ ws.addEventListener("message", function(event) {
       // TODO: compare the md5sum. md5.min.js works for string but seems to not
       // work for Uint8Array
 
-      // TODO assume text payload right now
-      text_payload = new TextDecoder().decode(payload)
-      render_text(text_payload)
+      render(payload)
     }
   }
 });

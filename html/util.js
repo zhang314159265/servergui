@@ -16,3 +16,12 @@ function Uint8Array_to_uint64(ar) {
   }
   return res
 }
+
+function Uint8Array_to_string(ar) {
+  /*
+   * "new TextDecoder().decode(payload)" does not work well for binary data.
+   * Check: https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string
+   * for more details.
+   */
+  return String.fromCharCode.apply(null, ar)
+}

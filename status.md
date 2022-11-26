@@ -4,6 +4,14 @@
 - [WebSocket Python Client/Server - piesocket](https://www.piesocket.com/blog/python-websocket)
 - [Python Socket Tutorial](https://realpython.com/python-sockets/)
 
+# Future Features
+- support ssh connection to the server
+
+# TODO
+- check why img/giraffe.png cause 'stack size exceeded'
+- gracefully handle connection close from client. When reloading the html page, close the connection automatically
+- verify md5sum
+
 # Scratch
 
 - [JavaScript: The Good Parts](https://github.com/hypnguyen1209/JS-ebook/blob/master/JavaScriptTheGoodParts.pdf)
@@ -16,13 +24,3 @@
 
 - https://github.com/Pithikos/python-websocket-server
 - https://websockets.readthedocs.io/en/stable/
-
-## Future TODO
-- support ssh connection to the server
-
-## Milestone
-- push text/image from server to gui-client with a tcp connection
-
-## TDOO
-- tryout websocket
-  - have a demo with websocket
